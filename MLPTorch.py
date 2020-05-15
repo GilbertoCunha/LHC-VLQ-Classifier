@@ -7,26 +7,30 @@ from tqdm import tqdm
 import numpy as np
 
 
+# Selecionar o gpu se possível
 if torch.cuda.is_available():
     device = torch.device('cuda')
 else:
     device = 'cpu'
 
 
+# Criar o modelo
 class MLP(nn.Module):
     def __init__(self, input_size, num_classes):
         super(MLP, self).__init__()
         self.fc1 = nn.Linear(in_features=input_size, out_features=36*36).to(device)
         self.fc2 = nn.Linear(in_features=36*36, out_features=40*40).to(device)
         self.fc3 = nn.Linear(in_features=40*40, out_features=num_classes).to(device)
+        self.dropout = nn.Dropout(0.2)
 
     def forward(self, t):
-        t = F.relu(self.fc1(t.reshape(-1, 28*28)))
+        t = self.dropout(F.relu(self.fc1(t.reshape(-1, 28*28))))
         t = F.relu(self.fc2(t))
         t = F.softmax(self.fc3(t), dim=-1)
         return t
 
 
+# Dataset MNIST
 dataset = torchvision.datasets.MNIST(
     root='',
     download=True,
@@ -35,14 +39,14 @@ dataset = torchvision.datasets.MNIST(
     ]),
     train=True
 )
-
 dataloader = torch.utils.data.DataLoader(dataset, batch_size=64, shuffle=True)
 
-# Parameters
+# Parametros de ajuste do modelo
 model = MLP(28*28, 10).to(device)
 optimizer = torch.optim.Adam(model.parameters())
 epochs = 20
 
+# Ciclo de treino
 for epoch in range(epochs):
     train_acc, train_loss = 0, 0
 
