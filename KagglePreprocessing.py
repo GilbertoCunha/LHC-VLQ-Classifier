@@ -38,8 +38,6 @@ labels = np.array(labels)
 print(labels.shape)
 print(features.shape)
 
-# Divide data intro training and testing data
-
 
 # Save data
 np.save("features", features)

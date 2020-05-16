@@ -36,14 +36,14 @@ model.compile(optimizer="adam",
 model.fit(train_data, train_labels, validation_split=0.1, batch_size=64,
           epochs=10, verbose=2, callbacks=[tb])
 
-# Fazer uma ssembly de modelos (MC Dropout)
+# Assembly de modelos (MC Dropout)
 evals = np.stack([model.evaluate(test_data, test_labels) for _ in range(100)])
 losses, accs = evals[:, 0], evals[:, 1]
 mean_loss, mean_acc = losses.mean(axis=0), accs.mean(axis=0)
 std_loss, std_acc = losses.std(axis=0), accs.std(axis=0)
-print(f"Losses: {losses}")
+# print(f"Losses: {losses}")
 print(f"Mean loss: {mean_loss} | Std loss: {std_loss}")
-print(f"Accuracies: {accs}")
+# print(f"Accuracies: {accs}")
 print(f"Mean acc: {mean_acc} | Std acc: {std_acc}")
 
 # Save the model
